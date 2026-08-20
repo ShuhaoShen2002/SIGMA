@@ -1,0 +1,52 @@
+# Data (track only the gene/slide list text files, ignore everything else)
+data/*
+!data/hest1k/
+!data/hest1k/her2st/
+data/hest1k/her2st/*
+!data/hest1k/her2st/processed_data/
+data/hest1k/her2st/processed_data/*
+!data/hest1k/her2st/processed_data/*.txt
+!data/hest1k/kidney/
+data/hest1k/kidney/*
+!data/hest1k/kidney/processed_data/
+data/hest1k/kidney/processed_data/*
+!data/hest1k/kidney/processed_data/*.txt
+
+# Heavy raw/intermediate data artifacts (defense in depth)
+*.h5ad
+*.h5
+*.tif
+*.svs
+*.gz
+.cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+dist/
+build/
+
+# Model checkpoints
+*.pth
+*.pt
+*.ckpt
+
+# Training logs
+logs/
+*.log
+
+# HF token (download script)
+utils/.hf_token
+
+# IDE
+.vscode/
+.idea/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
