@@ -154,7 +154,7 @@ class GeneWiseAttentionPooling(nn.Module):
 
 
 class SIGMABase(nn.Module):
-    """Simplified SIGMA: tile encoder + gene-wise pooling + per-gene MLP (without cross-attention fusion)."""
+    """Simplified SIGMA: tile encoder + gene-wise pooling + per-gene MLP (without patch-context conditioning)."""
     def __init__(self, gene_nums=250, emb_dim=1536, depth=4, heads=8, mlp_dim=1536, dropout=0.):
         super().__init__()
 
@@ -177,7 +177,7 @@ class SIGMABase(nn.Module):
 
 
 class SIGMA(nn.Module):
-    """SIGMA: tile encoder + gene-wise pooling + cross-attention fusion + MLP head."""
+    """SIGMA: tile encoder + gene-wise pooling + patch-context conditioning + MLP head."""
     def __init__(self, gene_nums=250, emb_dim=1536, depth=3, heads=8, mlp_dim=1536, dropout=0.):
         super().__init__()
 

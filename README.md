@@ -15,7 +15,7 @@ SIGMA/
 ├── inference.py                  # Load a checkpoint and evaluate on the HER2ST test slide
 ├── model/                        # Model implementation
 │   ├── __init__.py
-│   ├── model.py                  # SIGMA: tile transformer + gene-wise attention pooling + cross-attention fusion + MLP head
+│   ├── model.py                  # SIGMA: tile transformer + gene-wise attention pooling + patch-context conditioning + MLP head
 │   └── vit.py                    # Reference ViT implementation (not used by the default SIGMA model)
 ├── dataset/                      # Dataset loaders
 │   ├── __init__.py
@@ -125,7 +125,7 @@ python main_kidney.py
 ```
 
 Each script trains SIGMA for 200 epochs with MSE loss, evaluates on the held-out test slide every epoch, and saves:
-- `SIGMA_{HER2ST|Kidney}_best.pth` — best checkpoint (lowest test RMSE)
+- `SIGMA_{HER2ST|Kidney}_best.pth` — best checkpoint (lowest test MSE)
 - `SIGMA_{HER2ST|Kidney}_eval.pt` — test-slide predictions from the best epoch
 - `logs/SIGMA_{HER2ST|Kidney}.log` — training/evaluation log
 
@@ -169,8 +169,8 @@ The model takes two inputs per spatial transcriptomics spot:
 Architecture flow:
 1. Add a learned position embedding to the 16 tiles, then encode them with a **TransformerEncoder** (self-attention over tiles).
 2. **GeneWiseAttentionPooling** — per-gene attention weights over the encoded tiles, producing a `(B, 300, 1536)` representation.
-3. **CrossEncoder** — cross-attention fuses the pooled tile representation with the patch embedding.
-4. Concatenate the pooled and fused representations and apply the **MLP head** → `(B, 300)` per-gene expression predictions.
+3. **Patch-context conditioning** (implemented by `CrossEncoder`) — the patch embedding is projected into a context vector that is added to every gene token through a residual connection, then transformed by a position-wise feed-forward network.
+4. Concatenate the pooled gene representation with the patch-conditioned one and apply the **MLP head** → `(B, 300)` per-gene expression predictions.
 
 The model is trained with MSE loss on `log2(x+1)`-normalized expression values; the per-gene attention weights are also returned and can be used for interpretability.
 
@@ -183,4 +183,4 @@ The model is trained with MSE loss on `log2(x+1)`-normalized expression values; 
 - **PCC-50** — Mean Pearson correlation of the 50 best-predicted genes
 - **PCC-All** — Mean Pearson correlation across all predicted genes
 
-The best checkpoint is selected by the lowest RMSE on the held-out test slide.
+The best checkpoint is selected by the lowest MSE on the held-out test slide.
